@@ -1,0 +1,32 @@
+## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 17.00, 17.0, 170, 16.50, 16.5, 1650, 165w, 16.00, 16.0, 1600 ##
+
+DEV Database:
+1) Restore an Eval database as "Lucity" that is the same Lucity version as the target Dev database.  The database should be restored to the oldest supported instance of SQL Server
+2) Run the "UpdateDevData.sql" script on the Lucity database
+3) Verify the "GISRestore_MasterSQLServerDevelopment.sql" script is up-to-date and run on the Lucity database
+4) Set the Recovery mode to Simple if it is not already and set the maximum file sizes to match the LucityDev database
+5) Backup the database as LucityDev1650.bak and place at N:\Progdev\CSOURCE\Install\Databases\SQL Server\Demo\1650\Dev
+6) Backup the Existing Dev databases and archive (Just copy DevNightlyBackup.bak and paste as Pre170DevNightlyBackup.bak)
+7) Run the "CreateAllDBProcedureScript_SQLServer_ToTransferToNewDev.sql" and "CreateAllDBTriggerScript_SQLServer_ToTransferToNewDev.sql" scripts to generate all of the Procedures and Triggers on the Dev databases (they are created in N:\Progdev\SP_Backup\).  Note that these scripts are different than the ones in the Nightly Processes as they do not exclude "Internal" Procedures and Triggers and they utilize a Template to remove existing Procedures and Triggers
+	A) Run these statements via commandline as they will error due to output issues with Management Studio
+		i) osql.exe -E -S GBAMS-DEV-01\DEV -d master -i "C:\Conversion Process\CreateAllDBProcedureScript_SQLServer_ToTransferToNewDev.sql"
+		ii) osql.exe -E -S GBAMS-DEV-01\DEV -d master -i "C:\Conversion Process\CreateAllDBTriggerScript_SQLServer_ToTransferToNewDev.sql"
+8) Restore the LucityDev1650.bak database to the GBAMS-DEV-01\DEV instance overwriting the "LucityDev" databases.  (Note that if the LucityDEV is set as the default database, it may be necessary to change the Default to Master for all the logins in order to replace the database)
+9) Run the InternalDBRestore.sql script on the DEV databases, making sure to modify the script to only run on the "LucityDev" database
+10) Run the Stored Procedure and Trigger scripts created in N:\Progdev\SP_Backup\
+11) Run the "ConfigureDEVDatabases.sql" script
+12) Restore an archived LucityDev database to the local SQL Server instance with a suffix of "tmp" and run DBComparison
+	A) Copy the DBComparison files from C:\Conversion Process\16.50\Internal, make a sub directory of DEV, copy to sub directory
+	B) Launch DBComparison in DEV folder
+	C) Change the Automation setup to point to the archived Dev databases (tmp) and new Dev databases and set the script pathing to a local directory
+	D) Change the Ignore list to not ignore internal views (VWI%)
+	E) Run the Structure Automation and run the scripts on the Dev databases
+	F) Change the Automation to compare the archived Dev databases (tmp) to the LOCAL Dev databases taken at Cutoff and Run the Data Automation
+		i) Review the scripts removing anything that was made for the 16.5 release after the cutoff
+		ii) Run the scripts on the Dev databases
+13) Check with Rob to see if the database should indicate 17.00 and update the USVER table to have a 17.00 entry
+	insert into LucityDev..usver (ver_id, ver_num, ver_dt, ver_sp) select MAX(ver_id) + 1, 17.00, '2/2/2016', 0 from LucityDev..usver
+14) Run the ViewEDEN_LucityUnified.sql script after changing "DATABASENAME" to "Eden_Demo" and making sure the script is referring to LucityDev in the USING statement.  May need to Fully qualify the DatabaseName if the Eden database is on another server
+15) Run the TRACK_DDL_ON_PROC.sql and TRACK_DDL_on_TABLE.sql scripts on LucityDev database
+16) Run, in order, the DUPLICATE_TRIG.sql, DDL_TRIG.sql, DML_TRIG.sql and CHECK_LENGTH_OF_SP.sql scripts
+17) Backup the new Dev databases

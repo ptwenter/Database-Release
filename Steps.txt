@@ -1,0 +1,68 @@
+## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 17.50, 17.5, 17.00, 17.0, 1700, 170w, 16.50, 16.5, 1650 ##
+
+CONVERSION:
+1) Follow the instructions in CreatingCleanDatabasesAndScriptsForANewRelease.txt
+
+EVAL DATABASE PROCESS:
+1) Follow the Instructions in CreatingEvalDatabaseForANewRelease.txt
+
+DEV DATABASES AND INITIAL EVAL DATABASES:
+1) Follow the instructions in CreatingNewDevDatabase.txt
+
+NIGHTLY DATABASES:
+1) Copy a set of SQL Server Eval databases, rename them "Nightly" (ie LucityNightly) and place in "\\GBAMS-DEV-01\SQLServerBackups\GBAMastr" and "\\GBAMS-BVMSVR-02\SQLBackups"
+2) Restore a clean Oracle database for the released version and run DataTransfer to transfer in a set of EVAL databases
+	A) Do not transfer the WKGEOM tables as the Geometry data will not transfer
+	B) Backup and place on N (N:\Progdev\CSOURCE\Install\Databases\Oracle\Demo\1700)
+		i) Remove all of the Lucity/GBA users from the database except GBA_ADMIN
+		ii) expdp gba_admin/admin@clntdata DUMPFILE=LUCITY1700DEMO11204.DMP
+
+NIGHTLY PROCESS:
+1) Update the NightlyDatabase.bat file version numbers and any other variables
+2) Check all of the *.sql files that are under version control in C:\Dev70\DatabaseRestoration\NightlyProcess to see if anything needs to be modified
+3) Perform a Find-and-Replace in the NightlyConfig.xml (C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Config) for the two versions prior to 17.50 and replace them with the next versions (I didn't list the actual find-and-repalce as it gets messed up when this document is updated for version numbers)
+4) Modify the GBALogin.mdb (C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Config) so that App version and DB version indicate 17.50 and 17.00, respectively.  The DB version for the clint023 entries should be 17.50.
+5) Remove the sections from all of the *.sql files in C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Scripts\Data\UpgradeScripts\HandCodedDataChanges that do not indicate they should persist
+6) Remove the sections from all of the *.sql files in C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Scripts\Oracle\UpgradeScripts\HandCodedStructureChanges that do not indicate they should persist
+7) Remove the sections from all of the *.sql files in C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Scripts\SQL Server\UpgradeScripts\HandCodedStructureChanges that do not indicate they should persist
+8) Modify the "N:\Progdev\CSOURCE\Install\Databases\LucityScripts.json" to have a section for the new release
+9) If TableRules.xls is changed, run UpdateNightlyAndEvalConfiguration.bat and check in the DBComparisonSetup.xml files
+
+TLB (17.50):
+1) Make sure all conversion scripts are in T:\TestData\Scripts (including scripts for prior release service pack that may not have gone out yet)
+		i) Just run T:\TestData\Scripts\UpdateScriptsTLB.bat
+2) Run ClientMaintenanceTLB after a successful Nightly DB Process run to update all of the configuration information
+
+TLB (17.00):
+1) Create a scripts folder in the TLB Programs folder and copy in the contents from T:\TestData\Scripts (Run "T:\TestData\Scripts\UpdateScriptsTLB.bat" if it hasn't already been run)
+	A) Modify the UpdateScriptsTLB.bat script to copy in the scripts for the current and previous release (ie, remove the variable for versioning and hardcode the versioning) and modify the pathing
+		i) 	Replace the FOR loops with:
+				SET MOSTRECENTVERSION=1700
+				SET PRIORVERSION=1650
+		ii)	Perform a find-and-replace on "TestData" and change to "ProgramsXX" where XX is the current version
+2) Not sure how Documents are handled yet as no permanant location of the source files was known and all the XXDOC paths refer to an inaccessible location
+3) Restore a SQL Server Eval database to GBAMS-DEV-01\DEV
+	A) Run "N:\Progdev\CSOURCE\Install\Databases\SQL Server\DB Scripts\InHouse\GISRestore_Internal.sql" on the Restored database (might have a different file name)
+4) Restore a new Eval database to the Oracle instance GBADATA
+	A) Run "N:\Progdev\CSOURCE\Install\Databases\SQL Server\DB Scripts\InHouse\GISRestore_Internal.sql" on the Restored database (might have a different file name)
+5) Get a copy of the LicenseCodes.xml file from TLB and copy to the Config folder
+6) Run Client Maintenance to setup the clients
+
+PATCHES:
+1) Create a new folder for the new release at T:\Patches
+2) Copy all of the files and folders from the previous Patches folder except the ServicePack folders
+3) In the new "Current" folder, delete all the files (del *.* /s /q)
+4) Modify the batch files in the root of the new release folder
+5) Modify the FileLocations table in the Patches.mdb so that the Paths point to the new directory.  This is crucial as patches will be posted to the previous directory until this is done
+6) Blank out the Patches table in the Patches.mdb
+7) <*RUN the "Update FileLocations Table" Module Rather than the following, but use the path specified below*> Update the dates and file versions in the FileLocations table of the Patches.mdb
+	A) Run MovePatches and press the "Select Loc" button and browse to N:\Progdev\CSOURCE\Install\MSI\17.0\SourceFiles\Lucity\Program Files
+	B) After the folder loads, press the "Output Filelist" button
+	C) In the output file replace " Version " with "" and "	 " with "	"
+	D) Import in the output and update the FileLocations table.  Make sure to change FIELD2 to text from a datetime as many of the dates will not come in if you don't
+		i) UPDATE FILELOCATIONS,1700FileList SET [DATETIME] = FIELD2, VERSION = FIELD3 WHERE FILE = FIELD1 AND VERSION < FIELD3
+8) Copy the most recent folder in Q:\Group\cwright\PatchesForDesktop and create a new patch folder.  Copy this to other users' Q who post patches
+9) Modify the Profiles.ini in N:\Progdev\VBSource\Source - Utility Programs\MovePatches to have new profiles for each user already in the file
+
+GENERAL:
+1) Make sure all Install applications are up-to-date on the VM for the current release as the VM might have gotten created before the release went out and therefore might have any last minute changes.  Make sure to check the VB VM as well.

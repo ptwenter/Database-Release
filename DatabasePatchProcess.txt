@@ -1,0 +1,7 @@
+Database Patch:
+1) Make sure that ClientMaintenance is rebuilt for the Service Pack.  Verify the Lucity.build file has the approprate version information and kick off a C# build so that the program is signed
+2) Increment the SP level in the GBALogin.mdb on N.
+3) Upgrade all of the "Tmp" Access databases on N to the current SP. Just run the UpgradeDatabase module and the compact and repair.  Note that SewerTmp will have issues due to SWMACP, just set the next step to "m_dbPtr.TableDefs.Refresh" when errors are encountered
+4) Make any changes to the scripts on N to include the database modifications
+5) Run a build of the Integrations and copy the built files from "N:\Progdev\VBSource\Compiled - testlatestbuild\programs\Integrations" to "I:\Implementation\Technical\Integrations\Integration Versions"
+6) Run UpdateScriptsTLB.bat in the Scripts folder on the appropriate TLB (review the bat file) and copy in the appropraite ClientMaintenance

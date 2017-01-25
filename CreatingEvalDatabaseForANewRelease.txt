@@ -1,0 +1,27 @@
+## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 17.50, 17.5, 17.00, 17.0, 1700, 170w, 16.50, 16.5, 1650 ##
+
+Eval Database Process
+1) Archive backup of the Eval database used in TLB
+2) Create/Overwrite the "UpdateLucityEval.sql" script from the Eval database to contain configuration information so that when a new Eval database is put in place, the configuration information can be set to the same values
+	A) Running the following statement will generate UPDATE statements for the exsiting SYSTEMSETTINGS entries
+		SELECT 'UPDATE SYSTEMSETTINGS SET SYSSET_VALUE = ' + CASE WHEN SYSSET_VALUE IS NULL THEN 'NULL' ELSE '''' + REPLACE(SYSSET_VALUE, '''', '''''') + '''' END + ' WHERE SYSSET_ID = ' + CAST(SYSSET_ID AS VARCHAR) FROM SYSTEMSETTINGS ORDER BY SYSSET_ID
+3) Restore backup of the Eval database as "Lucity" to the minimum supported version of SQL Server (currently 2008)
+	A) If the backup is not compatibile with the oldest version of SQL Server, then restore a Clean database of the SAME version (USVER) as the Eval database to the minimum version of SQL Server and use DataTransfer to transfer data to it
+4) Run ClientMaintenance and configure a client to point to the Lucity database and upgrade it to the current version (17.00)
+5) Restore a CLEAN 17.00 database, run the following statement on it, and copy and overwrite the SYSTEMSETTINGS' UPDATE statements in the "BackupEval.sql" script
+	SELECT 'UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = ' + CASE WHEN SYSSET_VALUE IS NULL THEN 'NULL' ELSE '''' + REPLACE(SYSSET_VALUE, '''', '''''') + '''' END + ' WHERE SYSSET_ID = ' + CAST(SYSSET_ID AS VARCHAR) FROM SYSTEMSETTINGS ORDER BY SYSSET_ID
+6) Review the DML statements (INSERT, UPDATE, DELETE) at the top of "BackupEval.sql" script, and run JUST those DML statements on the Eval database
+7) Run CleanDB.exe and fix data as necessary
+	A) Copy the N:\Progdev\GIS\Eval\Documents\RootDocStore.zip to C:\LucityServer\Lucity (it must be this path as that is what it stored in the Eval data) and unzip it there so that Documents exist for the Document checks.
+	B) As per Eric Daniel (1/23/3016) ignore the problems with Storm Pipe elevations
+8) Review any Clean database scripts to see if anything should be run on the Eval dataset
+9) If we want to update the Eval data to have more current dates, then review, modify and run "IncrementDateFields.sql"
+10) Backup the database utlizing the "BackupEval.sql" script and copy the backup to N:\Progdev\CSOURCE\Install\Databases\SQL Server\Demo\1700
+11) Remove the Eval client from the prior TLB release (16.50)
+12) Restore the Eval database over the existing LucityEval database and run "UpdateLucityEval.sql"
+13) If there is already a TLB for 17.00, then run ClientMaintenance from there and configure an Eval client to point to the LucityEval database.  If there is no TLB for 17.00 and TLB still has everything configured for a 17.00 environment, then configure a client on TLB to point to the LucityEval database (use clint021).
+14) Notify whomever is responsible for the Eval data that they can make the appropriate changes for the new modules and wait for them to do so.
+15) After confirmation that the Eval database is finalized, backup the LucityEval database, restore it as Lucity then back it up utlizing the "BackupEval.sql" script and copy the backup to N:\Progdev\CSOURCE\Install\Databases\SQL Server\Demo\1700
+	A) If TLB was used, remove/uninstall the client
+16) Run ClientMaintenance on the appropriate instance of TLB to configure the new Eval client pointing to the LucityEval database.  Use the same configuration information as the prior TLB used (ie, same client name and clintxxx number)
+	A) Move the .reg files for the Eval client from the PCSetup folder of the prior TLB install to the new TLB install.  Modify them if the Server or database name changed
