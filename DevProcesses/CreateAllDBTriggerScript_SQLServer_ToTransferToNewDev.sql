@@ -39,8 +39,8 @@ FETCH NEXT FROM MHCURSOR INTO @databaseName
 WHILE @@FETCH_STATUS = 0
 BEGIN
 
-	set @path = 'D:\NetShares\N\Progdev\SP_Backup\' + @databaseName + '_Triggers.sql'
-	set @templatePath = 'D:\NetShares\N\Progdev\SP_Backup\TemplateTriggers.sql'
+	set @path = 'D:\SQLServerBackups\scripts\' + @databaseName + '_Triggers.sql'
+	set @templatePath = 'D:\SQLServerBackups\scripts\TemplateTriggers.sql'
 
 	/* clean up existing files */
 	  begin

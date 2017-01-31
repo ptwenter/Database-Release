@@ -35,8 +35,8 @@ FETCH NEXT FROM MHCURSOR INTO @databaseName
 WHILE @@FETCH_STATUS = 0
 BEGIN
 
-	set @path = 'D:\NetShares\N\Progdev\SP_Backup\' + @databaseName + '_Procedures.sql'
-	set @templatePath = 'D:\NetShares\N\Progdev\SP_Backup\TemplateProcedures.sql'
+	set @path = 'D:\SQLServerBackups\scripts\' + @databaseName + '_Procedures.sql'
+	set @templatePath = 'D:\SQLServerBackups\scripts\TemplateProcedures.sql'
 
 	/* clean up existing files */
 	  begin

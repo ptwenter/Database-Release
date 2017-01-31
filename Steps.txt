@@ -1,6 +1,5 @@
 ## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 17.50, 17.5, 17.00, 17.0, 1700, 170w, 16.50, 16.5, 1650 ##
 
-
 CONVERSION:
 1) Follow the instructions in CreatingCleanDatabasesAndScriptsForANewRelease.txt
 
@@ -11,12 +10,13 @@ DEV DATABASES AND INITIAL EVAL DATABASES:
 1) Follow the instructions in CreatingNewDevDatabase.txt
 
 NIGHTLY DATABASES:
-1) Copy a set of SQL Server Eval databases, rename them "Nightly" (ie LucityNightly) and place in "\\GBAMS-DEV-01\SQLServerBackups\GBAMastr" and "\\GBAMS-BVMSVR-02\SQLBackups"
+1) Copy SQL Server Eval database, rename it "LucityNightly" and place in "\\LCT-SQL-01\SQLServerBackups"
 2) Restore a clean Oracle database for the released version and run DataTransfer to transfer in a set of EVAL databases
 	A) Do not transfer the WKGEOM tables as the Geometry data will not transfer
 	B) Backup and place on N (N:\Progdev\CSOURCE\Install\Databases\Oracle\Demo\1700)
 		i) Remove all of the Lucity/GBA users from the database except GBA_ADMIN
 		ii) expdp gba_admin/admin@clntdata DUMPFILE=LUCITY1700DEMO11204.DMP
+	C) Copy the Backup to the \\LCT-ORA-01\oracle-dev-dpdump folder.  Remove the old DMP file from that folder
 
 NIGHTLY PROCESS:
 1) Update the NightlyDatabase.bat file version numbers and any other variables
@@ -33,6 +33,7 @@ TLB (17.50):
 1) Make sure all conversion scripts are in T:\TestData\Scripts (including scripts for prior release service pack that may not have gone out yet)
 		i) Just run T:\TestData\Scripts\UpdateScriptsTLB.bat
 2) Run ClientMaintenanceTLB after a successful Nightly DB Process run to update all of the configuration information
+3) Make sure the Version information in LucityMain.ini indicates 17.5
 
 TLB (17.00):
 1) Create a scripts folder in the TLB Programs folder and copy in the contents from T:\TestData\Scripts (Run "T:\TestData\Scripts\UpdateScriptsTLB.bat" if it hasn't already been run)
@@ -42,7 +43,7 @@ TLB (17.00):
 				SET PRIORVERSION=1650
 		ii)	Perform a find-and-replace on "TestData" and change to "ProgramsXX" where XX is the current version
 2) Not sure how Documents are handled yet as no permanant location of the source files was known and all the XXDOC paths refer to an inaccessible location
-3) Restore a SQL Server Eval database to GBAMS-DEV-01\DEV
+3) Restore a SQL Server Eval database to LCT-SQL-01\DEV2008
 	A) Run "N:\Progdev\CSOURCE\Install\Databases\SQL Server\DB Scripts\InHouse\GISRestore_Internal.sql" on the Restored database (might have a different file name)
 4) Restore a new Eval database to the Oracle instance GBADATA
 	A) Run "N:\Progdev\CSOURCE\Install\Databases\SQL Server\DB Scripts\InHouse\GISRestore_Internal.sql" on the Restored database (might have a different file name)

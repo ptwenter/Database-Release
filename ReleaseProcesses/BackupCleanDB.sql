@@ -1,3 +1,4 @@
+/*When SQL Server 2012 becomes the lowest supported version, change the SELECT statement for shrinking the database file */
 USE [master]
 GO
 
@@ -80,6 +81,7 @@ DBCC SHRINKFILE (LucityLog, 100)
 
 DECLARE @FileSize int,
 	@NewFileSize varchar(10),
+	@NewUsedFileSize, int,
 	@RemoveViewsql VARCHAR(1000),
 	@DropUserssql VARCHAR(1000),
 	@sql VARCHAR(1000),
@@ -87,7 +89,7 @@ DECLARE @FileSize int,
 	
 SELECT @VER = cmptlevel FROM [master].dbo.sysdatabases WHERE NAME = 'MODEL'
 	
-SET @DropUserssql = 'USE ++
+SET @DropUserssql = 'USE Lucity
 
 DECLARE @userDefinition AS NVARCHAR(1000)
 DECLARE USER_CURSOR CURSOR STATIC FOR
@@ -103,8 +105,16 @@ END
 CLOSE USER_CURSOR
 DEALLOCATE USER_CURSOR'
 
-SELECT @sql = REPLACE(@DropUserssql, '++', 'Lucity')
-EXEC (@sql)
+EXEC (@DropUserssql)
+
+--USE THE FOLLOWING ONCE 2012 is the lowest supported version
+--select @FileSize = CAST(CASE s.type WHEN 2 THEN s.size * CONVERT(float,8) ELSE dfs.allocated_extent_page_count*convert(float,8) END AS float)/1024
+select @FileSize = CAST(CASE s.type WHEN 2 THEN 0 ELSE CAST(FILEPROPERTY(s.name, ''SpaceUsed'') AS float)* CONVERT(float,8) END AS float)/1024
+from sys.filegroups AS g inner join sys.database_files AS s on ((s.type = 2 or s.type = 0) and (s.drop_lsn IS NULL)) AND (s.data_space_id=g.data_space_id) left outer join sys.dm_db_file_space_usage as dfs ON dfs.database_id = db_id() AND dfs.file_id = s.file_id
+where s.name = N'Lucity' and g.data_space_id = 1
+Set @NewUsedFileSize = @FileSize * 1.2
+DBCC SHRINKFILE (Lucity, @NewUsedFileSize, TRUNCATEONLY)
+
 EXEC ('ALTER DATABASE [Lucity] MODIFY FILE ( NAME = ''Lucity'', MAXSIZE = 1500)')
 ALTER DATABASE LUCITY SET RECOVERY SIMPLE
 ALTER DATABASE LUCITY SET RECOVERY FULL

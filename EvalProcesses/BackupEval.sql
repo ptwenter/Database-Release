@@ -1,3 +1,4 @@
+/*When SQL Server 2012 becomes the lowest supported version, change the SELECT statement for shrinking the database file */
 /*Perform a FIND-AND-REPLACE on "1700" to indicate the appropriate Version*/
 /*Perform a FIND-AND-REPLACE on "LucitySUFFIX" to indicate the appropriate database */
 
@@ -343,6 +344,7 @@ GO
 
 DECLARE @FileSize int,
 	@NewFileSize varchar(10),
+	@NewUsedFileSize int,
 	@DropUserssql VARCHAR(1000),
 	@VER INT
 	
@@ -365,6 +367,15 @@ CLOSE USER_CURSOR
 DEALLOCATE USER_CURSOR'
 
 EXEC (@DropUserssql)
+
+--USE THE FOLLOWING ONCE 2012 is the lowest supported version
+--select @FileSize = CAST(CASE s.type WHEN 2 THEN s.size * CONVERT(float,8) ELSE dfs.allocated_extent_page_count*convert(float,8) END AS float)/1024
+select @FileSize = CAST(CASE s.type WHEN 2 THEN 0 ELSE CAST(FILEPROPERTY(s.name, ''SpaceUsed'') AS float)* CONVERT(float,8) END AS float)/1024
+from sys.filegroups AS g inner join sys.database_files AS s on ((s.type = 2 or s.type = 0) and (s.drop_lsn IS NULL)) AND (s.data_space_id=g.data_space_id) left outer join sys.dm_db_file_space_usage as dfs ON dfs.database_id = db_id() AND dfs.file_id = s.file_id
+where s.name = N'Lucity' and g.data_space_id = 1
+Set @NewUsedFileSize = @FileSize * 1.2
+DBCC SHRINKFILE (Lucity, @NewUsedFileSize, TRUNCATEONLY)
+
 SELECT TOP 1 @FileSize = (size*8/1024) FROM LucitySUFFIX..SYSFILES
 Set @NewFileSize = @FileSize + 1000
 EXEC ('ALTER DATABASE [LucitySUFFIX] MODIFY FILE ( NAME = ''Lucity'', MAXSIZE = ' + @NewFileSize + ')')
