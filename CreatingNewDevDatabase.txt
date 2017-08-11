@@ -3,7 +3,7 @@
 DEV Database:
 1) Restore an Eval database as "Lucity" that is the same Lucity version as the target Dev database.  The database should be restored to the oldest supported instance of SQL Server
 2) Run the "UpdateDevData.sql" script on the Lucity database
-3) Verify the "GISRestore_MasterSQLServerDevelopment.sql" script is up-to-date and run on the Lucity database
+3) Verify the "GISRestore_MasterSQLServerDevelopment.sql" script is up-to-date and run on the Lucity database (N:\Progdev\GIS\Eval\Scripts)
 4) Set the Recovery mode to Simple if it is not already and set the maximum file sizes to match the LucityDev database
 5) Backup the database as LucityDev1750.bak and place at N:\Progdev\CSOURCE\Install\Databases\SQL Server\Demo\1750\Dev
 6) Backup the Existing Dev databases and archive (Pre180DevNightlyBackup.bak)
@@ -25,9 +25,9 @@ DEV Database:
 		i) Review the scripts removing anything that was made for the 17.5 release after the cutoff
 		ii) Run the scripts on the Dev databases
 13) Check with Rob to see if the database should indicate 18.00 and update the USVER table to have a 18.00 entry
-	insert into LucityDev..usver (ver_id, ver_num, ver_dt, ver_sp) select MAX(ver_id) + 1, 18.00, '2/2/2016', 0 from LucityDev..usver
+	INSERT INTO LUCITYDEV..USVER (VER_ID, VER_NUM, VER_DT, VER_SP) SELECT MAX(VER_ID) + 1, 18.00, '2/2/2016', 0 FROM LUCITYDEV..USVER
 14) Run the ViewEDEN_LucityUnified.sql script after changing "DATABASENAME" to "Eden_Demo" and making sure the script is referring to LucityDev in the USING statement.  May need to Fully qualify the DatabaseName if the Eden database is on another server
-15) Run the TRACK_DDL_ON_PROC.sql and TRACK_DDL_on_TABLE.sql scripts on LucityDev database
+15) Run the TRACK_DDL_on_TABLE.sql script on LucityDev database  (the TRACK_DDL_ON_PROC.sql is no longer used as the table in DatabaseTracker was removed during the 18 development cycle)
 16) Run, in order, the DUPLICATE_TRIG.sql, DDL_TRIG.sql, DML_TRIG.sql and CHECK_LENGTH_OF_SP.sql scripts
 17) Make sure that LUCITY_USER Login has the "View any definition" permission.  Check if there were any permissions on the LUCITY_USER user that needs to be added (it has been part of the db_owner role in the past).
 18) Backup the new Dev databases

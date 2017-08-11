@@ -6,7 +6,7 @@ CONVERSION:
 EVAL DATABASE PROCESS:
 1) Follow the Instructions in CreatingEvalDatabaseForANewRelease.txt
 
-DEV DATABASES AND INITIAL EVAL DATABASES:
+DEV DATABASES:
 1) Follow the instructions in CreatingNewDevDatabase.txt
 
 NIGHTLY DATABASES:
@@ -23,7 +23,7 @@ NIGHTLY PROCESS:
 1) Update the NightlyDatabase.bat file version numbers and any other variables
 2) Check all of the *.sql files that are under version control in C:\Dev70\DatabaseRestoration\NightlyProcess to see if anything needs to be modified
 3) Perform a Find-and-Replace in the NightlyConfig.xml (C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Config) for the two versions prior to 18.00 and replace them with the next versions (I didn't list the actual find-and-repalce as it gets messed up when this document is updated for version numbers)
-4) Modify the GBALogin.mdb (C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Config) so that App version and DB version indicate 18.00 and 17.50, respectively.  The DB version for the clint023 entries should be 18.00.
+4) Modify the GBALogin.mdb (C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Config) so that App version and DB version indicate 18.00 and 17.50, respectively.  Add and entry to the Ver table.
 5) Remove the sections from all of the *.sql files in C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Scripts\Data\UpgradeScripts\HandCodedDataChanges that do not indicate they should persist
 6) Remove the sections from all of the *.sql files in C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Scripts\Oracle\UpgradeScripts\HandCodedStructureChanges that do not indicate they should persist
 7) Remove the sections from all of the *.sql files in C:\Dev70\DatabaseRestoration\NightlyProcess\NightlyConversionProgram\Scripts\SQL Server\UpgradeScripts\HandCodedStructureChanges that do not indicate they should persist
@@ -42,12 +42,12 @@ TLB (17.50):
 		i) 	Replace the FOR loops with:
 				SET MOSTRECENTVERSION=1750
 				SET PRIORVERSION=1700
-		ii)	Perform a find-and-replace on "TestData" and change to "ProgramsXX" where XX is the current version
+		ii)	Perform a find-and-replace on "TestData" and change to "TestLatestBuild\ProgramsXX" where XX is the current version
 2) Not sure how Documents are handled yet as no permanant location of the source files was known and all the XXDOC paths refer to an inaccessible location
-3) Restore a SQL Server Eval database to LCT-SQL-01\DEV2008
-	A) Run "N:\Progdev\CSOURCE\Install\Databases\SQL Server\DB Scripts\InHouse\GISRestore_Internal.sql" on the Restored database (might have a different file name)
+3) Restore a SQL Server Eval database to LCT-SQL-01\DEV2012
+	A) Run "N:\Progdev\GIS\Eval\Scripts\GISRestore_Internal.sql" on the Restored database
 4) Restore a new Eval database to the Oracle instance GBADATA
-	A) Run "N:\Progdev\CSOURCE\Install\Databases\SQL Server\DB Scripts\InHouse\GISRestore_Internal.sql" on the Restored database (might have a different file name)
+	A) Run "N:\Progdev\GIS\Eval\Scripts\GISRestore_Internal.sql" on the Restored database
 5) Get a copy of the LicenseCodes.xml file from TLB and copy to the Config folder
 6) Run Client Maintenance to setup the clients
 
