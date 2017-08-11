@@ -21,7 +21,7 @@ Declare @columnName nvarchar(128),
 		@dataType nvarchar(128)
 
 DECLARE COLUMN_DATA_TYPE CURSOR FOR 
-SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE DATA_TYPE NOT IN ('int','float','varchar','smallint','bit','datetime','money','decimal','geometry') AND TABLE_NAME = @tableName
+SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE DATA_TYPE NOT IN ('int','float','varchar','smallint','bit','datetime','money','decimal','geometry','varbinary') AND TABLE_NAME = @tableName
 OPEN COLUMN_DATA_TYPE
 
 FETCH NEXT FROM COLUMN_DATA_TYPE 

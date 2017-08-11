@@ -5,11 +5,13 @@ IF NOT EXISTS (SELECT * FROM LucityDev.dbo.sysusers WHERE NAME = 'GBAMS\gbaMSDev
 EXEC sp_addrolemember N'db_owner', N'GBAMS\gbaMSDevDBOwners'
 IF NOT EXISTS (SELECT * FROM LucityDev.dbo.sysusers WHERE NAME = 'GBAMS\gbaMSDEVInstanceUsers')
 	CREATE USER [GBAMS\gbaMSDEVInstanceUsers] FOR LOGIN [GBAMS\gbaMSDEVInstanceUsers]
-EXEC sp_addrolemember N'GBAMS_GATEWAY', N'GBAMS\gbaMSDEVInstanceUsers'
+EXEC sp_addrolemember N'LUCITYGATEWAY', N'GBAMS\gbaMSDEVInstanceUsers'
 IF NOT EXISTS (SELECT * FROM LucityDev.dbo.sysusers WHERE NAME = 'GBAMS\Domain Users')
 	CREATE USER [GBAMS\Domain Users] FOR LOGIN [GBAMS\Domain Users]
-EXEC sp_addrolemember N'GBAMS_GATEWAY', N'GBAMS\Domain Users'
-
+EXEC sp_addrolemember N'LUCITYGATEWAY', N'GBAMS\Domain Users'
+IF NOT EXISTS (SELECT * FROM LucityDev.dbo.sysusers WHERE NAME = 'LinkedServerLogin')
+	CREATE USER [LinkedServerLogin] FOR LOGIN [LinkedServerLogin]
+EXEC sp_addrolemember N'db_datareader', N'LinkedServerLogin'
 
 DROP TRIGGER [LUCITY_PREVENT_DDL] ON DATABASE
 GO
@@ -35,6 +37,7 @@ GRANT DELETE ON [dbo].[TRACK_DML] TO [LUCITY_USER]
 GRANT UPDATE ON [dbo].[TRACK_DML] TO [LUCITY_USER]
 GRANT REFERENCES ON [dbo].[TRACK_DML] TO [LUCITY_USER]
 GO
+EXEC sp_addrolemember N'db_datareader', N'LUCITY_USER'
 
 use [Eden_Demo]
 GO
