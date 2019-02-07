@@ -12,6 +12,9 @@ EXEC sp_addrolemember N'LUCITYGATEWAY', N'GBAMS\Domain Users'
 IF NOT EXISTS (SELECT * FROM LucityDev.dbo.sysusers WHERE NAME = 'LinkedServerLogin')
 	CREATE USER [LinkedServerLogin] FOR LOGIN [LinkedServerLogin]
 EXEC sp_addrolemember N'db_datareader', N'LinkedServerLogin'
+IF NOT EXISTS (SELECT * FROM LucityDev.dbo.sysusers WHERE NAME = 'BobTheBuilder')
+	CREATE USER [BobTheBuilder] FOR LOGIN [BobTheBuilder]
+EXEC sp_addrolemember N'db_owner', N'BobTheBuilder'
 
 DROP TRIGGER [LUCITY_PREVENT_DDL] ON DATABASE
 GO
