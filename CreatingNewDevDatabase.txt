@@ -1,31 +1,31 @@
-## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 18.00, 18.0, 180, 17.50, 17.5, 1750, 175, 17.00, 17.0, 1700 ##
+## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 19.50, 19.5, 195, 19.00, 19.0, 1900, 190, 18.50, 18.5, 1850 ##
 
 DEV Database:
 1) Restore an Eval database as "Lucity" that is the same Lucity version as the target Dev database.  The database should be restored to the oldest supported instance of SQL Server
 2) Run the "UpdateDevData.sql" script on the Lucity database
 3) Verify the "GISRestore_MasterSQLServerDevelopment.sql" script is up-to-date and run on the Lucity database (N:\Progdev\GIS\Eval\Scripts)
 4) Set the Recovery mode to Simple if it is not already and set the maximum file sizes to match the LucityDev database
-5) Backup the database as LucityDev1750.bak and place at N:\Progdev\CSOURCE\Install\Databases\SQL Server\Demo\1750\Dev
-6) Backup the Existing Dev databases and archive (Pre180DevNightlyBackup.bak)
-7) Run the "CreateAllDBProcedureScript_SQLServer_ToTransferToNewDev.sql" and "CreateAllDBTriggerScript_SQLServer_ToTransferToNewDev.sql" scripts to generate all of the Procedures and Triggers on the Dev databases (they are created in \\LCT-SQL-01\SQLServerBackups\scripts).  Note that these scripts are different than the ones in the Nightly Processes as they do not exclude "Internal" Procedures and Triggers and they utilize a Template to remove existing Procedures and Triggers
+5) Backup the database as LucityDev1900.bak and place at N:\Progdev\CSOURCE\Install\Databases\SQL Server\Demo\1900\Dev
+6) Backup the Existing Dev databases and archive (Pre195DevNightlyBackup.bak)
+7) Run the "CreateAllDBProcedureScript_SQLServer_ToTransferToNewDev.sql" and "CreateAllDBTriggerScript_SQLServer_ToTransferToNewDev.sql" scripts to generate all of the Procedures and Triggers on the Dev databases (they are created in \\LCT-SQL-01\SQLServerBackups\scripts).  Note that these scripts are different than the ones in the Nightly Processes as they include "Internal" Procedures and Triggers and they utilize a Template to remove existing Procedures and Triggers
 	A) Run these statements via commandline as they will error due to output issues with Management Studio
 		i) osql.exe -E -S LCT-SQL-01\DEV2008 -d master -i "C:\DatabaseProcesses\DevProcesses\CreateAllDBProcedureScript_SQLServer_ToTransferToNewDev.sql"
 		ii) osql.exe -E -S LCT-SQL-01\DEV2008 -d master -i "C:\DatabaseProcesses\DevProcesses\CreateAllDBTriggerScript_SQLServer_ToTransferToNewDev.sql"
-8) Restore the LucityDev1750.bak database to the LCT-SQL-01\DEV2008 instance overwriting the "LucityDev" databases.  (Note that if the LucityDEV is set as the default database, it may be necessary to change the Default to Master for all the logins in order to replace the database)
+8) Restore the LucityDev1900.bak database to the LCT-SQL-01\DEV2008 instance overwriting the "LucityDev" databases.  (Note that if the LucityDEV is set as the default database, it may be necessary to change the Default to Master for all the logins in order to replace the database)
 9) Run the InternalDBRestore.sql script on the DEV databases, making sure to modify the script to only run on the "LucityDev" database
 10) Run the Stored Procedure and Trigger scripts created in \\LCT-SQL-01\SQLServerBackups\scripts
 11) Run the "ConfigureDEVDatabases.sql" script
 12) Restore an archived LucityDev database to the local SQL Server instance with a suffix of "tmp" and run DBComparison
-	A) Copy the DBComparison files from C:\Conversion Process\17.50\Internal, make a sub directory of DEV, copy to sub directory
+	A) Copy the DBComparison files from C:\Conversion Process\19.00\Internal, make a sub directory of DEV, copy to sub directory
 	B) Launch DBComparison in DEV folder
 	C) Change the Automation setup to point to the archived Dev databases (tmp) and new Dev databases and set the script pathing to a local directory
 	D) Change the Ignore list to not ignore internal views (VWI%)
 	E) Run the Structure Automation, review and run the scripts on the Dev databases
 	F) Change the Automation to compare the archived Dev databases (tmp) to the LOCAL Dev databases taken at Cutoff and Run the Data Automation
-		i) Review the scripts removing anything that was made for the 17.5 release after the cutoff
+		i) Review the scripts removing anything that was made for the 19.0 release after the cutoff
 		ii) Run the scripts on the Dev databases
-13) Check with Rob to see if the database should indicate 18.00 and update the USVER table to have a 18.00 entry
-	INSERT INTO LUCITYDEV..USVER (VER_ID, VER_NUM, VER_DT, VER_SP) SELECT MAX(VER_ID) + 1, 18.00, '2/2/2016', 0 FROM LUCITYDEV..USVER
+13) Check with Rob to see if the database should indicate 19.50 and update the USVER table to have a 19.50 entry
+	INSERT INTO LUCITYDEV..USVER (VER_ID, VER_NUM, VER_DT, VER_SP) SELECT MAX(VER_ID) + 1, 19.50, '2/2/2016', 0 FROM LUCITYDEV..USVER
 14) Run the ViewEDEN_LucityUnified.sql script after changing "DATABASENAME" to "Eden_Demo" and making sure the script is referring to LucityDev in the USING statement.  May need to Fully qualify the DatabaseName if the Eden database is on another server
 15) Run the TRACK_DDL_on_TABLE.sql script on LucityDev database  (the TRACK_DDL_ON_PROC.sql is no longer used as the table in DatabaseTracker was removed during the 18 development cycle)
 16) Run, in order, the DUPLICATE_TRIG.sql, DDL_TRIG.sql, DML_TRIG.sql and CHECK_LENGTH_OF_SP.sql scripts
