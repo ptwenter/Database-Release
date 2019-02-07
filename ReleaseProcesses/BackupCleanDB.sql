@@ -2,6 +2,15 @@
 USE [master]
 GO
 
+update Lucity..cmfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..elfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..effields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..pkfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..swfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..smfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..stfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..wtfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..wkfields set MASK = MAXMASK where FLDTYPE = 5
 update Lucity..cmfields set defaultvalue = null where defaultvalue = ''
 update Lucity..elfields set defaultvalue = null where defaultvalue = ''
 update Lucity..effields set defaultvalue = null where defaultvalue = ''
@@ -67,8 +76,18 @@ update Lucity..User_Info set Password = '5A69527563653665' where initials = 'Pub
 update Lucity..User_Info set Password = '' where initials = 'RESTAPILogOn'
 delete from Lucity..USERLICENSES
 delete from Lucity..WINDOWSTOUSER	
-update Lucity..SYSTEMSETTINGS set SYSSET_VALUE = NULL WHERE SYSSET_NAME IN ('LicenseIdentifier','ClientNumber','ClientName','ConfigDirectory','LicenseType', 'LicenseCode', 'CustomerAccountID')
+update Lucity..SYSTEMSETTINGS set SYSSET_VALUE = NULL WHERE SYSSET_NAME IN ('LicenseIdentifier','ClientNumber','ClientName','ConfigDirectory','LicenseType', 'LicenseCode', 'CustomerAccountID', 'CustomerIdentifier')
 update Lucity..CONNECTSTRINGS set CONN_SERVER = NULL, CONN_DB = NULL, CONN_USERID = NULL, CONN_PASSWORD = NULL, CONN_DISABLED = 0, CONN_COMPT = 1, CONN_PARMS = NULL
+delete from Lucity..LACTIVITYLOG
+delete from Lucity..ACTIVATIONLOG
+delete from Lucity..LERRORLOG
+delete from Lucity..LAUDITLOG
+delete from Lucity..LCTEMPALIAS
+delete from Lucity..LEVENTTRACK
+delete from Lucity..GBAELOG
+delete from Lucity..USDLGPROMPTS
+delete from Lucity..LTASKS
+delete from Lucity..CITIZENPROC
 
 USE LUCITY
 GO
@@ -124,5 +143,5 @@ EXEC [master]..sp_dbcmptlevel [Lucity], @VER
 
 GO
 
-BACKUP DATABASE Lucity TO DISK =  'D:\SQLServerBackups\2008\Lucity1750.bak' WITH INIT
+BACKUP DATABASE Lucity TO DISK =  'D:\SQLServerBackups\2008\Lucity1900.bak' WITH INIT
 GO

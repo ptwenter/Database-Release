@@ -1,6 +1,15 @@
 /* These statements ensure that data in the Clean database does not contain testing values and is uniform */
 /* If modifying/adding statements to the below, determine if the same modifications need to be made to the script that backs up the Clean dbs */
 
+update Lucity..cmfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..elfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..effields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..pkfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..swfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..smfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..stfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..wtfields set MASK = MAXMASK where FLDTYPE = 5
+update Lucity..wkfields set MASK = MAXMASK where FLDTYPE = 5
 update Lucity..cmfields set defaultvalue = null where defaultvalue = ''
 update Lucity..elfields set defaultvalue = null where defaultvalue = ''
 update Lucity..effields set defaultvalue = null where defaultvalue = ''
