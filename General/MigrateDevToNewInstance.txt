@@ -1,0 +1,71 @@
+***ON THE DEV2008 INSTANCE***
+
+BACKUP DATABASE [DatabaseTracker] TO  DISK = N'D:\SQLServerBackups\2012\DatabaseTracker.bak' WITH NOFORMAT, INIT,  NAME = N'DatabaseTracker-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10
+GO
+BACKUP DATABASE [Eden_Demo] TO  DISK = N'D:\SQLServerBackups\2012\Eden_Demo.bak' WITH NOFORMAT, INIT,  NAME = N'Eden_Demo-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10
+GO
+BACKUP DATABASE [LucityDev] TO  DISK = N'D:\SQLServerBackups\2012\LucityDev.bak' WITH NOFORMAT, INIT,  NAME = N'LucityDev-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10
+GO
+
+
+***ON THE DEV INSTANCE***
+
+USE [master]
+RESTORE DATABASE [DatabaseTracker] FROM  DISK = N'D:\SQLServerBackups\2012\DatabaseTracker.bak' WITH  FILE = 1,  NOUNLOAD,  REPLACE,  STATS = 5
+GO
+USE [DatabaseTracker]
+--Associate user to logins where the names match and the user is not already associated to a login
+DECLARE @SQL VARCHAR(MAX),
+		@USERNAME VARCHAR(MAX),
+		@LOGINNAME VARCHAR(MAX)
+DECLARE MHCURSOR	CURSOR FOR SELECT u.NAME FROM dbo.sysusers u INNER JOIN [master].dbo.syslogins l on u.name = l.name WHERE islogin = 1 AND u.sid NOT IN (SELECT sid FROM [master].dbo.syslogins)
+OPEN MHCURSOR
+FETCH NEXT FROM MHCURSOR INTO @USERNAME
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	EXEC sp_change_users_login 'Update_One', @USERNAME, @USERNAME
+	FETCH NEXT FROM MHCURSOR INTO @USERNAME
+END
+CLOSE MHCURSOR
+DEALLOCATE MHCURSOR
+GO
+
+USE [master]
+RESTORE DATABASE [Eden_Demo] FROM  DISK = N'D:\SQLServerBackups\2012\Eden_Demo.bak' WITH  FILE = 1,  NOUNLOAD,  REPLACE,  STATS = 5
+GO
+USE [Eden_Demo]
+--Associate user to logins where the names match and the user is not already associated to a login
+DECLARE @SQL VARCHAR(MAX),
+		@USERNAME VARCHAR(MAX),
+		@LOGINNAME VARCHAR(MAX)
+DECLARE MHCURSOR	CURSOR FOR SELECT u.NAME FROM dbo.sysusers u INNER JOIN [master].dbo.syslogins l on u.name = l.name WHERE islogin = 1 AND u.sid NOT IN (SELECT sid FROM [master].dbo.syslogins)
+OPEN MHCURSOR
+FETCH NEXT FROM MHCURSOR INTO @USERNAME
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	EXEC sp_change_users_login 'Update_One', @USERNAME, @USERNAME
+	FETCH NEXT FROM MHCURSOR INTO @USERNAME
+END
+CLOSE MHCURSOR
+DEALLOCATE MHCURSOR
+GO
+
+USE [master]
+RESTORE DATABASE [LucityDev] FROM  DISK = N'D:\SQLServerBackups\2012\LucityDev.bak' WITH  FILE = 1,  NOUNLOAD,  REPLACE,  STATS = 5
+GO
+USE [LucityDev]
+--Associate user to logins where the names match and the user is not already associated to a login
+DECLARE @SQL VARCHAR(MAX),
+		@USERNAME VARCHAR(MAX),
+		@LOGINNAME VARCHAR(MAX)
+DECLARE MHCURSOR	CURSOR FOR SELECT u.NAME FROM dbo.sysusers u INNER JOIN [master].dbo.syslogins l on u.name = l.name WHERE islogin = 1 AND u.sid NOT IN (SELECT sid FROM [master].dbo.syslogins)
+OPEN MHCURSOR
+FETCH NEXT FROM MHCURSOR INTO @USERNAME
+WHILE @@FETCH_STATUS = 0
+BEGIN
+	EXEC sp_change_users_login 'Update_One', @USERNAME, @USERNAME
+	FETCH NEXT FROM MHCURSOR INTO @USERNAME
+END
+CLOSE MHCURSOR
+DEALLOCATE MHCURSOR
+GO
