@@ -1,5 +1,4 @@
-/*When SQL Server 2012 becomes the lowest supported version, change the SELECT statement for shrinking the database file */
-/*Perform a FIND-AND-REPLACE on "1900" to indicate the appropriate Version*/
+/*Perform a FIND-AND-REPLACE on "1950" to indicate the appropriate Version*/
 /*Perform a FIND-AND-REPLACE on "LucitySUFFIX" to indicate the appropriate database */
 
 update LucitySUFFIX..cmfields set MASK = MAXMASK where FLDTYPE = 5
@@ -80,7 +79,6 @@ delete from LucitySUFFIX..LERRORLOG
 delete from LucitySUFFIX..LAUDITLOG
 delete from LucitySUFFIX..LCTEMPALIAS
 delete from LucitySUFFIX..LEVENTTRACK
-delete from LucitySUFFIX..GBAELOG
 delete from LucitySUFFIX..USDLGPROMPTS
 
 UPDATE LucitySUFFIX..CONNECTSTRINGS SET CONN_SERVER = NULL, CONN_DB = NULL, CONN_USERID = NULL, CONN_PASSWORD = NULL
@@ -135,7 +133,7 @@ UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'FALSE' WHERE SYSSET_ID =
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '30' WHERE SYSSET_ID = 95
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = NULL WHERE SYSSET_ID = 98
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'FALSE' WHERE SYSSET_ID = 100
-UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'To open this record in the web application click on the link below.  If this does not work for you, you can copy the link and paste it into Internet Explorer' WHERE SYSSET_ID = 101
+UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'To open this record in the web application click on the link below.  If this does not work for you, you can copy the link and paste it into your web browser.' WHERE SYSSET_ID = 101
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'FALSE' WHERE SYSSET_ID = 103
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = NULL WHERE SYSSET_ID = 104
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'TRUE' WHERE SYSSET_ID = 105
@@ -166,15 +164,15 @@ UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'http://help.lucity.com/w
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'TRUE' WHERE SYSSET_ID = 152
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'Send e-mail copy.' WHERE SYSSET_ID = 156
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'Send this to these additional email addresses (Note: Use semi-colons to separate email addresses):' WHERE SYSSET_ID = 157
-UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '10' WHERE SYSSET_ID = 158
-UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '2' WHERE SYSSET_ID = 159
+UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '20' WHERE SYSSET_ID = 158
+UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '20' WHERE SYSSET_ID = 159
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'FALSE' WHERE SYSSET_ID = 160
-UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '20' WHERE SYSSET_ID = 161
-UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '20' WHERE SYSSET_ID = 162
+UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '' WHERE SYSSET_ID = 161
+UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '' WHERE SYSSET_ID = 162
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'jpg,gif,png,bmp' WHERE SYSSET_ID = 164
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = NULL WHERE SYSSET_ID = 165
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'There was an error uploading the document' WHERE SYSSET_ID = 166
-UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'Conversion' WHERE SYSSET_ID = 168
+UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = NULL WHERE SYSSET_ID = 168
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = '\images\SignLib\' WHERE SYSSET_ID = 169
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'StartsWith' WHERE SYSSET_ID = 170
 UPDATE LucitySUFFIX..SYSTEMSETTINGS SET SYSSET_VALUE = 'TRUE' WHERE SYSSET_ID = 171
@@ -409,9 +407,7 @@ DEALLOCATE USER_CURSOR'
 
 EXEC (@DropUserssql)
 
---USE THE FOLLOWING ONCE 2012 is the lowest supported version
---select @FileSize = CAST(CASE s.type WHEN 2 THEN s.size * CONVERT(float,8) ELSE dfs.allocated_extent_page_count*convert(float,8) END AS float)/1024
-select @FileSize = CAST(CASE s.type WHEN 2 THEN 0 ELSE CAST(FILEPROPERTY(s.name, 'SpaceUsed') AS float)* CONVERT(float,8) END AS float)/1024
+select @FileSize = CAST(CASE s.type WHEN 2 THEN s.size * CONVERT(float,8) ELSE dfs.allocated_extent_page_count*convert(float,8) END AS float)/1024
 from sys.filegroups AS g inner join sys.database_files AS s on ((s.type = 2 or s.type = 0) and (s.drop_lsn IS NULL)) AND (s.data_space_id=g.data_space_id) left outer join sys.dm_db_file_space_usage as dfs ON dfs.database_id = db_id() AND dfs.file_id = s.file_id
 where s.name = N'Lucity' and g.data_space_id = 1
 Set @NewUsedFileSize = @FileSize * 1.2
@@ -426,6 +422,6 @@ EXEC [master]..sp_dbcmptlevel [LucitySUFFIX], @VER
 
 GO
 
-BACKUP DATABASE LucitySUFFIX TO DISK =  'D:\SQLServerBackups\2008\LucityEval1900.bak' WITH INIT
+BACKUP DATABASE LucitySUFFIX TO DISK =  'D:\SQLServerBackups\2012\LucityEval1950.bak' WITH INIT
 GO
 
