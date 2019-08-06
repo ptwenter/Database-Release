@@ -1,76 +1,76 @@
-## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 19.50, 19.5, 19.00, 19.0, 1900, 190w, 18.50, 18.5, 1850 ##
+## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 20.00, 20.0, 19.50, 19.5, 1950, 195w, 19.00, 19.0, 1900 ##
 
 CONVERSION
 1) Make sure there is a successfull run of the Nightly database processes
-2) Back up LucityDev...zip and DatabaseTracker...zip to \\LCT-SQL-01\SQLServerBackups\1900FinalBackups and unzip
+2) Back up LucityDev...zip and DatabaseTracker...zip to \\LCT-SQL-01\SQLServerBackups\1950FinalBackups and unzip
 3) Send e-mail about cutoff and stop the Nightly database processes (so that QA has static Nightly databases)
-	A) I took the backup of our DEV database from this morning (4 am) as the final databases for the 19.00 release.  If you have any database changes, including stored procedure changes, you must contact me in regards to the changes or they will not be made until 19.50.  Any database changes made to DEV at this point will be considered for 19.50, so if you need something for 19.00 SP1, you will also need to notify me in that regards.
+	A) I took the backup of our DEV database from this morning (4 am) as the final databases for the 19.50 release.  If you have any database changes, including stored procedure changes, you must contact me in regards to the changes or they will not be made until 20.00.  Any database changes made to DEV at this point will be considered for 20.00, so if you need something for 19.50 SP1, you will also need to notify me in that regards.
 4) Update local DEV70 folder from Subversion
 
 5) Run DB Release Process(C:\Dev70\DatabaseRestoration\Utility Apps\DBReleaseProcess)
 	A) Change variables to match pathing.  If the Dev and Tracker databases are zipped up, unzip them and specify the path to the bak file (unzip as LucityDev.bak and DatabaseTracker.bak).
 	B) Run Step 1 (does the following):
-		i) Creates a 19.00 folder in the Processing folder (C:\Conversion Process)
-		ii) Creates a Lucity, Lucity\Config, Lucity\bin, Lucity\bin\_config, Lucity\Data, and Lucity\Scripts folder in the 19.00 folder
-		iii) Creates a Code Scripts folder in the 19.00 folder
-		iv) Creates a LucityPtr.ini file in the 19.00\Lucity folder
-		v) Copies a GBALogin.mdb from the prior release folder on N to the 19.00\Lucity\Config folder
-		vi) Creates a LucityMain.ini file in the 19.00\Lucity\Config folder
-		vii) Copies the ClientMaintenance.exe, CSLA.dll, and Lucity.Shared.BaseObjects.dll from the development VM's NighlyConversionProgram folder to the 19.00\Lucity\bin folder
-		viii) Copies the entire NightlyProcess folder from the development VM's DatabaseRestorationfolder to the 19.00 Folder (don't just copy local folder as we want to preseve script generation)
-		ix) Copies the Scripts folder from the 19.00\NightlyProcess\NightlyConversionProgram folder to 19.00\Lucity\Scripts
-		x) Deletes the generated scripts from 19.00\Lucity\Scripts\Data\UpgradeScritps\1900 folder as new scripts will need to be generated
+		i) Creates a 19.50 folder in the Processing folder (C:\Conversion Process)
+		ii) Creates a Lucity, Lucity\Config, Lucity\bin, Lucity\bin\_config, Lucity\Data, and Lucity\Scripts folder in the 19.50 folder
+		iii) Creates a Code Scripts folder in the 19.50 folder
+		iv) Creates a LucityPtr.ini file in the 19.50\Lucity folder
+		v) Copies a GBALogin.mdb from the prior release folder on N to the 19.50\Lucity\Config folder
+		vi) Creates a LucityMain.ini file in the 19.50\Lucity\Config folder
+		vii) Copies the ClientMaintenance.exe, CSLA.dll, and Lucity.Shared.BaseObjects.dll from the development VM's NighlyConversionProgram folder to the 19.50\Lucity\bin folder
+		viii) Copies the entire NightlyProcess folder from the development VM's DatabaseRestorationfolder to the 19.50 Folder (don't just copy local folder as we want to preseve script generation)
+		ix) Copies the Scripts folder from the 19.50\NightlyProcess\NightlyConversionProgram folder to 19.50\Lucity\Scripts
+		x) Deletes the generated scripts from 19.50\Lucity\Scripts\Data\UpgradeScritps\1950 folder as new scripts will need to be generated
 		xi) Launches the LicenseGenerator program		
-	C) When LicenseGenerator comes up, update/create a new LicenseCodes.xml file for 3 clients (one for each db type and one SQL Server for the Clean databases) and place in the 19.00\Lucity folder
+	C) When LicenseGenerator comes up, update/create a new LicenseCodes.xml file for 3 clients (one for each db type and one SQL Server for the Clean databases) and place in the 19.50\Lucity folder
 	D) Run Step 2 (Moves backup files to local folder and restores to the instance and sets DBComparison to Client configuration)
 	E) When Client Maintenance comes up, setup SQL Server client pointing to Nightly database (set the "Associated Client" to something other than clint001 (ie, "Conversion") so it does not mess with DSNs), go through forms and when on the UPDATE screen, Modify all of the Targets to Indicate the last release and most current service pack, and press UPDATE then FINISH (This will apply the most recent Service Packs)
 	F) When DBComparison comes up, (This step can be skipped if there is 100% Confidence in the Nightly generated Structure scripts)
 		i) Perform structural compares on the restored Dev and Nightly databases to see if there are any glaring changes that need reviewing
-		ii) At this point, make a decision if the structural scripts from the Nightly processes are sufficient (They SHOULD be). If they are, utilize them. If they are not, then delete the Structure scripts from the C:\Conversion Process\19.00\Lucity\Scripts folders for the new release and perform the following:
+		ii) At this point, make a decision if the structural scripts from the Nightly processes are sufficient (They SHOULD be). If they are, utilize them. If they are not, then delete the Structure scripts from the C:\Conversion Process\19.50\Lucity\Scripts folders for the new release and perform the following:
 			a) Run the Structural Code Generation Automation
-			b) Move the scripts from C:\Conversion Process\19.00\Code Scripts to their respective db platform folders in C:\Conversion Process\19.00\Lucity\Scripts and rename the Files to be SQL1900Lucity.sql and Ora1900Lucity.sql for SQL Server and Oracle, respectively
-			c) Copy the data from PreLucity.sql and PostLucity.sql in C:\Conversion Process\19.00\NightlyProcess\NightlyConversionProgram\Scripts\SQL Server\UpgradeScripts\HandCodedStructureChanges and paste it to the beginning and end, respectively, of the the SQL1900Lucity.sql.  Perform identical process for Oracle.
+			b) Move the scripts from C:\Conversion Process\19.50\Code Scripts to their respective db platform folders in C:\Conversion Process\19.50\Lucity\Scripts and rename the Files to be SQL1950Lucity.sql and Ora1950Lucity.sql for SQL Server and Oracle, respectively
+			c) Copy the data from PreLucity.sql and PostLucity.sql in C:\Conversion Process\19.50\NightlyProcess\NightlyConversionProgram\Scripts\SQL Server\UpgradeScripts\HandCodedStructureChanges and paste it to the beginning and end, respectively, of the the SQL1950Lucity.sql.  Perform identical process for Oracle.
 		iii) Should be able to use Oracle and SQL Server procedure and triggers scripts as-is from the Nightly process
-6) Verify that all structural changes indicated in the C:\Conversion Process\19.00\NightlyProcess scripts are included in the structure scripts in C:\Conversion Process\19.00\Lucity\Scripts
+6) Verify that all structural changes indicated in the C:\Conversion Process\19.50\NightlyProcess scripts are included in the structure scripts in C:\Conversion Process\19.50\Lucity\Scripts
 7) Manually run the structure, procedure and triggers scripts on the Nightly database (Make sure you are pointed at the local LucityNightly database).  Note that a future step will be running the scripts for a full test start-to-finish via ClientMaintenance.
 	
-8) Run the DBComparison (C:\Conversion Process\19.00\DBComparison.exe) to verify all structure changes
-9) Run the statements from C:\Conversion Process\19.00\NightlyProcess\NightlyDataUpdates_SQLServer.sql on the Nightly database
+8) Run the DBComparison (C:\Conversion Process\19.50\DBComparison.exe) to verify all structure changes
+9) Run the statements from C:\Conversion Process\19.50\NightlyProcess\NightlyDataUpdates_SQLServer.sql on the Nightly database
 10) Run the "Remove and Update Picklists And Update XXFIELDS.sql" script on the Local databases to Remove and Update XXFIELDSDESC and XXFIELDSDESC records we won't be comparing and update some XXFIELDS settings
 11) Run the "Populate LSystemObjects.sql" script to populate the LSYSTEMOBJECTS table in the local LucityDEV (Note the script actually uses the Nightly databases for its structural references)
        
-12) Run the DBComparison (C:\Conversion Process\19.00) and review Data differences.  Cross-reference with the "Pre" and "Post" scripts in C:\Conversion Process\19.00\Lucity\Scripts\Data\UpgradeScripts\HandCodedDataChanges to prevent any redundancies.  Note that you can't just run the Pre and Post scripts on the database as they have non-sql syntax (review the scripts and if they can be run and the statements appear ok to run now, combine into a single script and run the statements on the Nightly databases. Statements that manipulate DATA tables can be run or not as they won't matter for the comparisons)
+12) Run the DBComparison (C:\Conversion Process\19.50) and review Data differences.  Cross-reference with the "Pre" and "Post" scripts in C:\Conversion Process\19.50\Lucity\Scripts\Data\UpgradeScripts\HandCodedDataChanges to prevent any redundancies.  Note that you can't just run the Pre and Post scripts on the database as they have non-sql syntax (review the scripts and if they can be run and the statements appear ok to run now, combine into a single script and run the statements on the Nightly databases. Statements that manipulate DATA tables can be run or not as they won't matter for the comparisons)
 	A) Remove any apparently bad FIELDSDESC and FIELDSDESCTXT records.  Ideally, only records for new fields should be added.  New records for existing fields require consideration of conflicts with existing client data
 	B) Verify MASK changes (Allow MASK changes for Type fields of a code/type as a client cannot set those and possibly things like Descritpion, Location or Memo fields)
 	C) If any new XXFIELDS records have an ALLOWINPUT value of 0, verify with Don and Nicole (shouldn't have issues as UPDATES in prior step sets all to true)
 	D) Verify new XXOPTIONS and SYSTEMSETTINGS values.  Run "List New XXOPTIONS and SYSTEMSETTINGS.sql"
 	E) Check for and remove any "Test" reports from the RPTS tables
 	F) Generate data code for the database
-		i) Rename the AccessDataCode.txt to be 1900Lucity.sql
+		i) Rename the AccessDataCode.txt to be 1950Lucity.sql
 	G) Provide Barbara a list of new XXRPTS and XXWEBRPTS for verification.  Run "List New Reports.sql"
 		
-13) Combine "Pre", the 1900Lucity.sql data script generated above, and "Post" scripts and place in C:\Conversion Process\19.00\Lucity\Scripts\Data\UpgradeScripts\1900 as 1900Lucity.sql
-14) Review the data scripts in C:\Conversion Process\19.00\NightlyProcess to see if anything needs to be added to the data script
-15) Add the INSERT statements from "Statements to Add to Data Script.sql" to the 1900Lucity.sql script.
+13) Combine "Pre", the 1950Lucity.sql data script generated above, and "Post" scripts and place in C:\Conversion Process\19.50\Lucity\Scripts\Data\UpgradeScripts\1950 as 1950Lucity.sql
+14) Review the data scripts in C:\Conversion Process\19.50\NightlyProcess to see if anything needs to be added to the data script
+15) Add the INSERT statements from "Statements to Add to Data Script.sql" to the 1950Lucity.sql script.
 
 16) Run Step 2 of the DB Release Process (Run through the entire conversion via Client Maintenance)
-	A) Close out of DBComparison and create an "Internal" directory, copy DBComparison and DBComparisonSetup.xml to it from the C:\Conversion Process\1900 folder and run UpdateComparisonFile.exe on the Setup file to set it for INTERNAL comparison and launch it
+	A) Close out of DBComparison and create an "Internal" directory, copy DBComparison and DBComparisonSetup.xml to it from the C:\Conversion Process\1950 folder and run UpdateComparisonFile.exe on the Setup file to set it for INTERNAL comparison and launch it
 		i) Run "Update Dev Data.sql" on DEV database (set ALLOWINPUT = 1 and populate XXDEF tables and clear GISCODE fields) and "Populate LSystemObjects.sql"
-		ii) Change output path for Automation to be C:\Conversion Process\19.00\Internal.
+		ii) Change output path for Automation to be C:\Conversion Process\19.50\Internal.
 		iii) Run both Structural and Data comparisons (not the "Run Comparison" automation) on the databases and verify everything is good-to-go. Note that DBComparison is different than the one for the Nightly process as it is setup to not generate UPDATEs on ignored fields.
 		iv) Run the Compare automation and send Don, Nicole, and Rob an email so they can review the changes that are not getting propagated. Alternatively, just save the DataSet from the previous step as it is easier to remove things that don't need to be reviewed (ie, Mod_By, Mod_dt, Mod_tm updates)
-17) **DEPRECATED** Restore a 18.50 DEMO Oracle backup to the CLINTDATA instance
-18) **DEPRECATED** Run C:\Conversion Process\19.00\Lucity\bin\ClientMaintenance.exe and configure Oracle client (change the Associated client to OracleConversion) and run the UPDATE
+17) **DEPRECATED** Restore a 19.00 DEMO Oracle backup to the CLINTDATA instance
+18) **DEPRECATED** Run C:\Conversion Process\19.50\Lucity\bin\ClientMaintenance.exe and configure Oracle client (change the Associated client to OracleConversion) and run the UPDATE
 19) **DEPRECATED** Run DBComparison and verify that the Oracle database matches the SQL Server Nightly databases
-	A) Create C:\Conversion Process\19.00\Internal\CompareSQLToOracle and copy DBComparison and xml file from C:\Conversion Process\19.00
+	A) Create C:\Conversion Process\19.50\Internal\CompareSQLToOracle and copy DBComparison and xml file from C:\Conversion Process\19.50
 	B) Check the option to Enforce Ignored Fields for Compares
-	C) Run DBComparison and change the Automation to compare SQL Nightly to Oracle, change output to be C:\Conversion Process\19.00\Internal\CompareSQLToOracle and run the Comparison Automation
-20) If everything checks out, copy the scripts from C:\Conversion Process\19.00\Lucity\Scripts to the appropriate folders on N.  Make sure to include the LucityScripts.json (only if modified because the one on the network is the "master") and CleanUp.sql files
-21) Restore a clean 18.50 SQL Server databases as "Lucity" to an Instance of SQL Server which is the lowest supported version (ie, 2008).
+	C) Run DBComparison and change the Automation to compare SQL Nightly to Oracle, change output to be C:\Conversion Process\19.50\Internal\CompareSQLToOracle and run the Comparison Automation
+20) If everything checks out, copy the scripts from C:\Conversion Process\19.50\Lucity\Scripts to the appropriate folders on N.  Make sure to include the LucityScripts.json (only if modified because the one on the network is the "master") and CleanUp.sql files
+21) Restore a clean 19.00 SQL Server databases as "Lucity" to an Instance of SQL Server which is the lowest supported version (ie, 2012).
 	A) Run ClientMaintenance to create the "CLEAN" client and run all the way through
 	B) Run "Update Clean Data.sql" on the clean database.  Note that the contents should be verified to be in "BackupCleanDB.sql"
-	C) Review XXOPTIONS and SYSTEMSETTINGS and WKFIELDSTRK (all TRK_FLAG values should be 0 for new records) and create a "CleanDBUpdates.sql" script in the C:\Conversion Process\19.00\Clean for changes that need to be made.
-	D) Copy DBComparison and DBComparisonSetup.xml files from C:\Conversion Process\19.00 into C:\Conversion Process\19.00\Clean and run UpdateComparisonFile.exe on the Setup file to set it for CLEAN comparison and launch it.  Change the Data Setup flags so that both "Enforce Ignored Fields" checkboxes are FALSE.
+	C) Review XXOPTIONS and SYSTEMSETTINGS and WKFIELDSTRK (all TRK_FLAG values should be 0 for new records) and create a "CleanDBUpdates.sql" script in the C:\Conversion Process\19.50\Clean for changes that need to be made.
+	D) Copy DBComparison and DBComparisonSetup.xml files from C:\Conversion Process\19.50 into C:\Conversion Process\19.50\Clean and run UpdateComparisonFile.exe on the Setup file to set it for CLEAN comparison and launch it.  Change the Data Setup flags so that both "Enforce Ignored Fields" checkboxes are FALSE.
 		i) Do Data Compares on the Clean database to the Dev database to see if there are any changes that should be pushed to Clean (note that the parameters for XXFIELDSDESC, XXFIELDSDESCTXT, XXDEF and a couple of other tables are different for the "CLEAN" configurations)
 			a) Since we only put XXFIELDSDESC and XXFIELDSDESCTXT values in for non-userdefinable values, or for new fields in the conversion, there may be a lot of differences for those tables.  Decide whether to review them or not. Step 16.ii should show any "changed" lists, so it is not worth the time to verify these as there will be a lot of items in our Eval set not in Clean
 	E) Run the "CleanDBUpdates.sql" script
@@ -78,25 +78,27 @@ CONVERSION
 		i) If yes, add to the "CleanDBUpdates.sql" script and then re-run processes for CLEAN database
 22) Modify "BackupCleanDB.sql" for current version and run script to backup the clean database
 23) Configure a TLB Client so that new Forms/Views can be added to the CLEAN database
-	A) Rename the Lucity1900.bak to Lucity1900PreForms.bak from the previous, backup step
+	A) Rename the Lucity1950.bak to Lucity1950PreForms.bak from the previous, backup step
 	B) Run ClientMaintenance.exe on TLB and configure the client pointing at the Lucity database.  Set the client number to CLINT033 if it is not in use.
 	C) Verify that the client added is in the Config\LucityServices.ini so that the database won't be processed by the services or stop the services.
 	D) Create/Verify/Update "T:\TestLatestBuild\PCSetup\DSN033WinXP_Wow6432Node.reg" to point to the new Client
 	E) Run Security.exe and create Login "LUCITY" with a password of "LucityClean" and grant to Admin role.  Make sure when specifying the password that the box is unchecked requiring the password to be reset on next login
 	F) Notify QA that they can add the appropriate Forms\Views
 	G) When QA gives the greenlight, backup the Clean database and restore it as LucityCleanTest and notify the appropriate staff to create a Web Client so that the Forms can be tested
-	H) If/when the Forms check out, run DBComparison from C:\Conversion Process\19.00\Clean to see what has changed in the Lucity database
+		i) If needing to re-replace the database use the RestoreAndPreserveWithPrompt.sql script so that Rob/Nicole do not need to reconfigure the database to work with Web
+		ii) Run this:  UPDATE CONNECTSTRINGS SET CONN_DB = 'LUCITYCLEANTEST'
+	H) If/when the Forms check out, run DBComparison from C:\Conversion Process\19.50\Clean to see what has changed in the Lucity database
 		i) Run Security and remove the LUCITY login
 		ii) Run ClientMaintenance and un-install the client
-		iii)Restore a backup of the Clean database from Lucity1900PreForms.bak and use as Database1 in DBComparison.  Database2 should be the Lucity database that was configured for TLB
+		iii)Restore a backup of the Clean database from Lucity1950PreForms.bak and use as Database1 in DBComparison.  Database2 should be the Lucity database that was configured for TLB
 		iv) Change the options in DBComparison to compare Row counts in the tables
 		v) Compare both Structure and Data
 		vi) Review the Tables tab to see what tables have different Row counts and update/verify the "BackupCleanDB.sql" script to clean out rows for the differences
 		vii) Script out the Data Differences (should only be the SYSTEMSETTINGS table) and run the script on the Lucity database to revert the changes
 	I) Run "BackupCleanDB.sql" to generate a backup of the Lucity database
-	J) Copy the backup from \\LCT-SQL-01\SQLServerBackups\2008 to N:\Progdev\CSOURCE\Install\Databases\SQL Server\Clean\1900
-24) Copy the GISTmp.mdb (check with Eric if there is a new one(N:\Progdev\GIS\Databases\1900)) file from N:\Progdev\CSOURCE\Install\Databases\Access\Clean\1850 to the 1900 Access folder.
-25) Make sure to put a new converted GBALogin.mdb in the 1900 Access folder (Only need to add a VER table entry)
+	J) Copy the backup from \\LCT-SQL-01\SQLServerBackups\2012 to N:\Progdev\CSOURCE\Install\Databases\SQL Server\Clean\1950
+24) Copy the GISTmp.mdb (check with Eric if there is a new one(N:\Progdev\GIS\Databases\1950)) file from N:\Progdev\CSOURCE\Install\Databases\Access\Clean\1900 to the 1950 Access folder.
+25) Make sure to put a new converted GBALogin.mdb in the 1950 Access folder (Only need to add a VER table entry)
 26) **DEPRECATED**  Copy SewerTmp.mdb and StormTmp.mdb from the previous release and place in a local folder
 	A) Open each Tmp database and verify the SourceDatabase is correctly pointed at the clean SQL Server database and run the Upgrade database module
 		i) If you get an error, verify if the table has hit the max number of columns and if so set the next line of code to be "m_dbPtr.TableDefs.Refresh".  After the process completes, add the tablename to the list of tables to skip.  Verify what columns are being skipped to ensure nothing important is missed
@@ -104,16 +106,16 @@ CONVERSION
 		iii) Make sure no "Linking" fields where added to the tables.  The code should already check to make sure no ROWVER, MOD, IMG_FLG and MOV_FLG columns and possibly some hard coded fields are added
 	B) Run the CheckLinkingFields module to verify there are no problems
 	C) Make sure the Ver tables are up-to-date.  Code use to update the table but the XXVER tables were removed in the consolidated database
-	C) Compact and Repair the databases and post to N:\Progdev\CSOURCE\Install\Databases\Access\Clean\1900 and mark the Read Only flag
-27) **DEPRECATED**  Restore a clean Oracle backup from 18.50, upgrade it via ClientMaintenance (use OracleConversion client and DO NOT RE-ASSOCIATE the CLEAN client) and then run DataTransfer on it to push the data from the Clean SQL Server databases to it.  MAKE SURE THE OPTION TO DELETE DESTINATION DATA is checked, or there will create unresolvable issues requiring the database to be re-restored.  Backup the database and copy to N:\Progdev\CSOURCE\Install\Databases\Oracle\Clean\1900
+	C) Compact and Repair the databases and post to N:\Progdev\CSOURCE\Install\Databases\Access\Clean\1950 and mark the Read Only flag
+27) **DEPRECATED**  Restore a clean Oracle backup from 19.00, upgrade it via ClientMaintenance (use OracleConversion client and DO NOT RE-ASSOCIATE the CLEAN client) and then run DataTransfer on it to push the data from the Clean SQL Server databases to it.  MAKE SURE THE OPTION TO DELETE DESTINATION DATA is checked, or there will create unresolvable issues requiring the database to be re-restored.  Backup the database and copy to N:\Progdev\CSOURCE\Install\Databases\Oracle\Clean\1950
 	A) If the machine does not have ODAC 12.1 installed or better it may be necessary to install from (http://www.oracle.com/technetwork/database/windows/downloads/utilsoft-087491.html) (used 12.1.0.1.2 Xcopy).  Make sure to put in a tnsnames.ora file in C:\oracle\network\admin and update your Path as per the download instructions.
-	B) Verify statements that are Dropping and re-creating "SELECT *" Views is complete and necessary (For the GIS_WKGEO views).  There is a block in the script that re-creates these views. Review the script prior to that block to see if there are new SELECT * views that may need to be added to the block in the future and note them for the 19.5 release.
+	B) Verify statements that are Dropping and re-creating "SELECT *" Views is complete and necessary (For the GIS_WKGEO views).  There is a block in the script that re-creates these views. Review the script prior to that block to see if there are new SELECT * views that may need to be added to the block in the future and note them for the 20.0 release.
 	C) Remove all of the Lucity/GBA users from the database except GBA_ADMIN
 	D) Check the Oracle database and delete the SYS_EXPORT_SCHEMA table in GBA_ADMIN and the respective Synonym in the Public schema.  This table and Synonym may exist if a prior expdb command failed
 	E) To backup: 
-		i) Old Format:  exp gba_admin/admin@clntdata file=N:\Progdev\CSOURCE\Install\Databases\Oracle\Clean\1900\Lucity1900clean11204.dmp owner=gba_admin log=C:\exp.log
-		ii) New format:  expdp gba_admin/admin@clntdata DUMPFILE=LUCITY1900CLEAN11204.DMP
-			a) Copy the DMP to N:\Progdev\CSOURCE\Install\Databases\Oracle\Clean\1900\
+		i) Old Format:  exp gba_admin/admin@clntdata file=N:\Progdev\CSOURCE\Install\Databases\Oracle\Clean\1950\Lucity1950clean11204.dmp owner=gba_admin log=C:\exp.log
+		ii) New format:  expdp gba_admin/admin@clntdata DUMPFILE=LUCITY1950CLEAN11204.DMP
+			a) Copy the DMP to N:\Progdev\CSOURCE\Install\Databases\Oracle\Clean\1950\
 28) Run a conversion on a set of databases that is at least 2 releases old
-	A) Make sure the scripts are up to date, as the the scripts in C:\Conversion Process\19.00\Lucity\Scripts would be up to date for only the last release and the current release (run "C:\Batch Files\UpdateScriptsLocal.bat")
+	A) Make sure the scripts are up to date, as the the scripts in C:\Conversion Process\19.50\Lucity\Scripts would be up to date for only the last release and the current release (run "C:\Batch Files\UpdateScriptsLocal.bat")
 29) Obtain client databases and run conversion on them
