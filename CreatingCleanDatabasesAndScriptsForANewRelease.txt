@@ -27,7 +27,7 @@ CONVERSION
 	F) When DBComparison comes up, (This step can be skipped if there is 100% Confidence in the Nightly generated Structure scripts)
 		i) Perform structural compares on the restored Dev and Nightly databases to see if there are any glaring changes that need reviewing
 		ii) At this point, make a decision if the structural scripts from the Nightly processes are sufficient (They SHOULD be). If they are, utilize them. If they are not, then delete the Structure scripts from the C:\Conversion Process\20.00\Lucity\Scripts folders for the new release and perform the following:
-			a) Run the Structural Code Generation Automation
+			a) Run -> Automation -> Run the Structural Code Generation Automation
 			b) Move the scripts from C:\Conversion Process\20.00\Code Scripts to their respective db platform folders in C:\Conversion Process\20.050\Lucity\Scripts and rename the Files to be SQL2000Lucity.sql and Ora20000Lucity.sql for SQL Server and Oracle, respectively
 			c) Copy the data from PreLucity.sql and PostLucity.sql in C:\Conversion Process\20.00\NightlyProcess\NightlyConversionProgram\Scripts\SQL Server\UpgradeScripts\HandCodedStructureChanges and paste it to the beginning and end, respectively, of the the SQL2000Lucity.sql.  Perform identical process for Oracle.
 		iii) Should be able to use Oracle and SQL Server procedure and triggers scripts as-is from the Nightly process
