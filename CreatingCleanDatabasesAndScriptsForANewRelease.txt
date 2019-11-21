@@ -10,32 +10,32 @@ CONVERSION
 5) Run DB Release Process(C:\Dev\DatabaseRestoration\Utility Apps\DBReleaseProcess)
 	A) Change variables to match pathing.  If the Dev and Tracker databases are zipped up, unzip them and specify the path to the bak file (unzip as LucityDev.bak and DatabaseTracker.bak).
 	B) Run Step 1 (does the following):  ---CONFIRMED---
-		i) Creates a 19.50 folder in the Processing folder (C:\Conversion Process)
-		ii) Creates a Lucity, Lucity\Config, Lucity\bin, Lucity\bin\_config, Lucity\Data, and Lucity\Scripts folder in the 19.50 folder
-		iii) Creates a Code Scripts folder in the 19.50 folder
-		iv) Creates a LucityPtr.ini file in the 19.50\Lucity folder
-		v) Copies a GBALogin.mdb from the prior release folder on N to the 19.50\Lucity\Config folder
-		vi) Creates a LucityMain.ini file in the 19.50\Lucity\Config folder
-		vii) Copies the ClientMaintenance.exe, CSLA.dll, and Lucity.Shared.BaseObjects.dll from the development VM's NighlyConversionProgram folder to the 19.50\Lucity\bin folder
-		viii) Copies the entire NightlyProcess folder from the development VM's DatabaseRestorationfolder to the 19.50 Folder (don't just copy local folder as we want to preseve script generation)
-		ix) Copies the Scripts folder from the 19.50\NightlyProcess\NightlyConversionProgram folder to 19.50\Lucity\Scripts
-		x) Deletes the generated scripts from 19.50\Lucity\Scripts\Data\UpgradeScritps\1950 folder as new scripts will need to be generated
+		i) Creates a 20.00 folder in the Processing folder (C:\Conversion Process)
+		ii) Creates a Lucity, Lucity\Config, Lucity\bin, Lucity\bin\_config, Lucity\Data, and Lucity\Scripts folder in the 20.00 folder
+		iii) Creates a Code Scripts folder in the 20.00 folder
+		iv) Creates a LucityPtr.ini file in the 20.00\Lucity folder
+		v) Copies a GBALogin.mdb from the prior release folder on N to the 20.00\Lucity\Config folder
+		vi) Creates a LucityMain.ini file in the 20.00\Lucity\Config folder
+		vii) Copies the ClientMaintenance.exe, CSLA.dll, and Lucity.Shared.BaseObjects.dll from the development VM's NighlyConversionProgram folder to the 20.00\Lucity\bin folder
+		<b>viii) Copies the entire NightlyProcess folder from the development VM's DatabaseRestorationfolder to the 20.00 Folder (don't just copy local folder as we want to preserve script generation)</b>
+		ix) Copies the Scripts folder from the 20.00\NightlyProcess\NightlyConversionProgram folder to 20.00\Lucity\Scripts
+		x) Deletes the generated scripts from 20.00\Lucity\Scripts\Data\UpgradeScripts\2000 folder as new scripts will need to be generated
 		xi) Launches the LicenseGenerator program		
-	C) When LicenseGenerator comes up, update/create a new LicenseCodes.xml file for 3 clients (one for each db type and one SQL Server for the Clean databases) and place in the 19.50\Lucity folder
-	D) Run Step 2 (Moves backup files to local folder and restores to the instance and sets DBComparison to Client configuration)
+	C) When LicenseGenerator comes up, update/create a new LicenseCodes.xml file for 3 clients (one for each db type and one SQL Server for the Clean databases) and place in the 20.00\Lucity folder (Rob asks - why are we doing this???)
+	D) Run Step 2 (Copies backup files to local folder and restores to the instance and sets DBComparison to Client configuration) - Rob thinks this restores the latest backup we had of LucityDev to Lucity on the local instance, and the LucityNightly.bak made at the end of the previous release to LucityNightly on the local instance.  The plan here is to run the scripts and upgrade the structures and data in LucityNightly to the current release changes.
 	E) When Client Maintenance comes up, setup SQL Server client pointing to Nightly database (set the "Associated Client" to something other than clint001 (ie, "Conversion") so it does not mess with DSNs), go through forms and when on the UPDATE screen, Modify all of the Targets to Indicate the last release and most current service pack, and press UPDATE then FINISH (This will apply the most recent Service Packs)
 	F) When DBComparison comes up, (This step can be skipped if there is 100% Confidence in the Nightly generated Structure scripts)
 		i) Perform structural compares on the restored Dev and Nightly databases to see if there are any glaring changes that need reviewing
-		ii) At this point, make a decision if the structural scripts from the Nightly processes are sufficient (They SHOULD be). If they are, utilize them. If they are not, then delete the Structure scripts from the C:\Conversion Process\19.50\Lucity\Scripts folders for the new release and perform the following:
+		ii) At this point, make a decision if the structural scripts from the Nightly processes are sufficient (They SHOULD be). If they are, utilize them. If they are not, then delete the Structure scripts from the C:\Conversion Process\20.00\Lucity\Scripts folders for the new release and perform the following:
 			a) Run the Structural Code Generation Automation
-			b) Move the scripts from C:\Conversion Process\19.50\Code Scripts to their respective db platform folders in C:\Conversion Process\19.50\Lucity\Scripts and rename the Files to be SQL1950Lucity.sql and Ora1950Lucity.sql for SQL Server and Oracle, respectively
-			c) Copy the data from PreLucity.sql and PostLucity.sql in C:\Conversion Process\19.50\NightlyProcess\NightlyConversionProgram\Scripts\SQL Server\UpgradeScripts\HandCodedStructureChanges and paste it to the beginning and end, respectively, of the the SQL1950Lucity.sql.  Perform identical process for Oracle.
+			b) Move the scripts from C:\Conversion Process\20.00\Code Scripts to their respective db platform folders in C:\Conversion Process\20.050\Lucity\Scripts and rename the Files to be SQL2000Lucity.sql and Ora20000Lucity.sql for SQL Server and Oracle, respectively
+			c) Copy the data from PreLucity.sql and PostLucity.sql in C:\Conversion Process\20.00\NightlyProcess\NightlyConversionProgram\Scripts\SQL Server\UpgradeScripts\HandCodedStructureChanges and paste it to the beginning and end, respectively, of the the SQL2000Lucity.sql.  Perform identical process for Oracle.
 		iii) Should be able to use Oracle and SQL Server procedure and triggers scripts as-is from the Nightly process
-6) Verify that all structural changes indicated in the C:\Conversion Process\19.50\NightlyProcess scripts are included in the structure scripts in C:\Conversion Process\19.50\Lucity\Scripts
+6) Verify that all structural changes indicated in the C:\Conversion Process\20.00\NightlyProcess scripts are included in the structure scripts in C:\Conversion Process\20.00\Lucity\Scripts
 7) Manually run the structure, procedure and triggers scripts on the Nightly database (Make sure you are pointed at the local LucityNightly database).  Note that a future step will be running the scripts for a full test start-to-finish via ClientMaintenance.
 	
-8) Run the DBComparison (C:\Conversion Process\19.50\DBComparison.exe) to verify all structure changes
-9) Run the statements from C:\Conversion Process\19.50\NightlyProcess\NightlyDataUpdates_SQLServer.sql on the Nightly database
+8) Run the DBComparison (C:\Conversion Process\20.00\DBComparison.exe) to verify all structure changes
+9) Run the statements from C:\Conversion Process\20.00\NightlyProcess\NightlyDataUpdates_SQLServer.sql on the Nightly database
 10) Run the "Remove and Update Picklists And Update XXFIELDS.sql" script on the Local databases to Remove and Update XXFIELDSDESC and XXFIELDSDESC records we won't be comparing and update some XXFIELDS settings
 11) Run the "Populate LSystemObjects.sql" script to populate the LSYSTEMOBJECTS table in the local LucityDEV (Note the script actually uses the Nightly databases for its structural references)
        
