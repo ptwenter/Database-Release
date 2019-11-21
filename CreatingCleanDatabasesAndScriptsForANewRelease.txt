@@ -1,15 +1,15 @@
 ## When updating this document for a new release do FIND-AND-REPLACE and replace the following, in order, with the "next" version number: 20.00, 20.0, 19.50, 19.5, 1950, 195w, 19.00, 19.0, 1900 ##
 
 CONVERSION
-1) Make sure there is a successfull run of the Nightly database processes
-2) Back up LucityDev...zip and DatabaseTracker...zip to \\LCT-SQL-01\SQLServerBackups\1950FinalBackups and unzip
+1) Make sure there is a successful run of the Nightly database processes
+2) Copy LucityDev...zip and DatabaseTracker...zip from \\LCT-SQL-01\SQLSErverBackups\sql-backup-master to \\LCT-SQL-01\SQLServerBackups\2000FinalBackups and unzip
 3) Send e-mail about cutoff and stop the Nightly database processes (so that QA has static Nightly databases)
 	A) I took the backup of our DEV database from this morning (4 am) as the final databases for the 19.50 release.  If you have any database changes, including stored procedure changes, you must contact me in regards to the changes or they will not be made until 20.00.  Any database changes made to DEV at this point will be considered for 20.00, so if you need something for 19.50 SP1, you will also need to notify me in that regards.
-4) Update local DEV70 folder from Subversion (we are going to assume all this is done on the build machine.  Chris W. did not indicate if he did these steps on the build machine or his machine).
+4) Update local c:\DEV folder from Git (local means your pc - so at the moment it means Parker's computer).
 
-5) Run DB Release Process(C:\Dev70\DatabaseRestoration\Utility Apps\DBReleaseProcess)
+5) Run DB Release Process(C:\Dev\DatabaseRestoration\Utility Apps\DBReleaseProcess)
 	A) Change variables to match pathing.  If the Dev and Tracker databases are zipped up, unzip them and specify the path to the bak file (unzip as LucityDev.bak and DatabaseTracker.bak).
-	B) Run Step 1 (does the following):
+	B) Run Step 1 (does the following):  ---CONFIRMED---
 		i) Creates a 19.50 folder in the Processing folder (C:\Conversion Process)
 		ii) Creates a Lucity, Lucity\Config, Lucity\bin, Lucity\bin\_config, Lucity\Data, and Lucity\Scripts folder in the 19.50 folder
 		iii) Creates a Code Scripts folder in the 19.50 folder
